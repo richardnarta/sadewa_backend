@@ -30,13 +30,13 @@ Install dependencies
 
 To run this project, you will need to add the following environment variables to your .env file
 
-# server configuration
+### server configuration
 
 `HOST`=localhost
 
 `PORT`=5000
 
-# database configuration
+### database configuration
 
 `PG_USER`=your_username
 
@@ -48,19 +48,19 @@ To run this project, you will need to add the following environment variables to
 
 `PG_PORT`=5432
 
-# brevo configuration
+### brevo configuration
 
 `BREVO_API_KEY`=your_API_key
 
 `BREVO_SENDER_EMAIL`=your_registered_email
 
-# redis configuration
+### redis configuration
 
 `REDIS_HOST`=localhost
 
 `REDIS_PORT`=6379
 
-# auth configuration
+### auth configuration
 
 `AUTH_SECRET_KEY`=your_secret_key
 
