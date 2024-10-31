@@ -2,6 +2,7 @@ const availableRoutes = [
   '/',
   '/auth/login',
   '/auth/forget',
+  '/auth/verify',
   '/auth/logout'
 ];
 
