@@ -24,7 +24,8 @@ async function removeToken(key) {
 }
 
 async function extendTokenExpire(key) {
-  await this.redis.expire(key, expirationTime);
+  const client = await getClient();
+  await client.expire(key, expirationTime);
 }
 
 module.exports = {

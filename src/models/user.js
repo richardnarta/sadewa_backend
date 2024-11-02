@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     username: DataTypes.STRING,
     name: DataTypes.TEXT,
     type: DataTypes.ENUM('pengelola', 'admin'),
+    verified: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'User',

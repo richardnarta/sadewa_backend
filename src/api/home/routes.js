@@ -5,7 +5,8 @@ const routes = (handler) => [
     handler: handler.getHomeHandler,
     options: {
       plugins: {
-        auth: false
+        auth: false,
+        admin: false,
       }
     }
   }

@@ -3,7 +3,11 @@ const availableRoutes = [
   '/auth/login',
   '/auth/forget',
   '/auth/verify',
-  '/auth/logout'
+  '/auth/logout',
+  '/users',
+  '/users/{userId}',
+  '/users/{userId}/verify',
+  '/users/password',
 ];
 
 const routePatterns = availableRoutes.map(route => {

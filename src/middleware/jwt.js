@@ -34,8 +34,19 @@ async function jwtMiddleware(request, h) {
     await extendTokenExpire(`${decoded.userId}:token`);
   }
 
+  const requiresRole = request.route.settings.plugins.admin;
+  if (requiresRole) {
+    if (decoded.type != 'admin') {
+      return h.response({
+        error: true,
+        message: "Forbidden"
+      }).code(403).takeover();
+    }
+  }
+
   request.auth = {
-    userId: decoded.userId
+    userId: decoded.id,
+    userType: decoded.type
   };
 
   return h.continue;

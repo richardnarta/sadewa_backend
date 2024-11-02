@@ -16,7 +16,7 @@ function generateToken(payload) {
 async function verifyToken(token) {
   try {
     const decoded = jwt.verify(token, secretKey,
-      { algorithms: ['HS256'] }
+      { algorithms: [algorithm] }
     );
     return decoded;
   } catch (error) {

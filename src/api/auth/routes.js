@@ -5,7 +5,8 @@ const routes = (handler) => [
     handler: handler.postAuthLoginHandler,
     options: {
       plugins: {
-        auth: false
+        auth: false,
+        admin: false,
       }
     }
   },
@@ -15,7 +16,8 @@ const routes = (handler) => [
     handler: handler.postAuthForgetHandler,
     options: {
       plugins: {
-        auth: false
+        auth: false,
+        admin: false,
       }
     }
   },
@@ -25,7 +27,8 @@ const routes = (handler) => [
     handler: handler.postAuthVerifyForgetHandler,
     options: {
       plugins: {
-        auth: false
+        auth: false,
+        admin: false,
       }
     }
   },
@@ -35,7 +38,8 @@ const routes = (handler) => [
     handler: handler.getAuthLogoutHandler,
     options: {
       plugins: {
-        auth: true
+        auth: true,
+        admin: false,
       }
     }
   }

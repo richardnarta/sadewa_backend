@@ -2,11 +2,13 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const home = require('./api/home')
 const auth = require('./api/auth');
-const UserService = require('./services/user-service')
-const AuthService = require('./services/auth-service')
-const AuthValidator = require('./validator/auth')
+const users = require('./api/users');
+const UserService = require('./services/user-service');
+const AuthService = require('./services/auth-service');
+const AuthValidator = require('./validator/auth');
+const UserValidator = require('./validator/users');
 const jwtMiddleware = require('./middleware/jwt');
-const validateRoute = require('./middleware/route-validator')
+const validateRoute = require('./middleware/route-validator');
 const ClientError = require('./exceptions/client-error');
 
 const init = async () => {
@@ -36,6 +38,15 @@ const init = async () => {
         },
         validator: AuthValidator,
       },
+    },
+    {
+      plugin: users,
+      options: {
+        service: {
+          "user": userService
+        },
+        validator: UserValidator,
+      },
     }
   ]);
 
@@ -46,9 +57,9 @@ const init = async () => {
 
     if (response instanceof ClientError) {
       return h.response({
-        error: false,
+        error: true,
         message: response.message,
-      }).code(response.statusCode);
+      }).code(response.statusCode).takeover();
     }
 
     return h.continue;

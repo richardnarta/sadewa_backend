@@ -1,21 +1,21 @@
 const sendEmail = require('../utils/email');
-const generateOTPHTML = require('../utils/otp-html')
-const { generateOTPCode, verifyPassword } = require('../utils/auth')
-const { generateToken, verifyToken } = require('../utils/jwt')
-const { storeToken, removeToken, storeOTP, getToken } = require('../utils/redis')
-const UserService = require('../services/user-service')
+const { generateForgetPasswordOTPHTML } = require('../utils/otp-html');
+const { generateOTPCode, verifyPassword } = require('../utils/auth');
+const { generateToken, verifyToken } = require('../utils/jwt');
+const { storeToken, removeToken, storeOTP, getToken } = require('../utils/redis');
+const UserService = require('../services/user-service');
 const ClientError = require('../exceptions/client-error');
 
 class AuthService {
   constructor () {
-    this._userService = new UserService()
+    this._userService = new UserService();
   }
 
   async sendUserEmailOTP(userEmail, userName) {
-    const OTP = generateOTPCode()
+    const OTP = generateOTPCode();
     const recipientName = userName;
-    const subject = '[Tambak Sadewa Farm] Verifikasi Akun';
-    const content = generateOTPHTML(recipientName, OTP);
+    const subject = '[Tambak Sadewa Farm] Lupa Password';
+    const content = generateForgetPasswordOTPHTML(recipientName, OTP);
 
     await storeOTP(`${userEmail}:otp`, OTP);
     await sendEmail(userEmail, recipientName, subject, content);
@@ -45,7 +45,7 @@ class AuthService {
   }
 
   async verifyForgetPassword(userEmail, OTP) {
-    const storedOTP = await getToken(`${userEmail}:otp`)
+    const storedOTP = await getToken(`${userEmail}:otp`);
 
     if (storedOTP === null) {
       throw new ClientError('Kode OTP telah expired');
