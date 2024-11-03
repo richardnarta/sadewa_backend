@@ -33,7 +33,7 @@ class UserHandler {
       error: false,
       message: "Kode OTP telah dikirimkan ke email anda",
       userId: userId
-    }).code(200);
+    }).code(201);
   }
 
   async getUserHandler(request, h) {
@@ -41,19 +41,11 @@ class UserHandler {
 
     const requester = request.auth;
 
-    const user = await this._userService.getUserById(userId, requester);
+    const userData = await this._userService.getUserById(userId, requester);
 
     return h.response({
       error: false,
-      data: {
-        "id": user.id,
-        "email": user.email,
-        "username": user.username,
-        "name": user.name,
-        "type": user.type,
-        "createdAt": user.createdAt,
-        "verified": user.verified
-      }
+      data: userData
     }).code(200);
   }
 

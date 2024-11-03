@@ -25,7 +25,7 @@ class UserService {
       throw new ClientError('Forbidden', 403);
     }
 
-    const user = await User.findByPk(userId);
+    let user = await User.findByPk(userId);
 
     if (user == null) {
       throw new NotFoundError('Pengguna tidak ditemukan');
@@ -35,7 +35,17 @@ class UserService {
       throw new ClientError('Pengguna belum terverifikasi');
     }
 
-    return user.dataValues;
+    user = user.dataValues;
+
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      name: user.name,
+      type: user.type,
+      createdAt: user.createdAt,
+      verified: user.verified
+    }
   }
 
   async getUserByUsername(username) {
