@@ -95,6 +95,13 @@ To run the redis service, run the following command
 ```
 
 
+## Root User
+
+`username`="admin"
+
+`password`="Test12345!"
+
+
 ## API Documentation
 
 [Documentation](https://docs.google.com/spreadsheets/d/1utMbEjBV4yvi6SznqQXrRF3L5p6jMc0gkrOxfiaUscI/edit?usp=sharing)
