@@ -14,8 +14,8 @@ const validateRoute = require('./middleware/route-validator');
 const ClientError = require('./exceptions/client-error');
 
 const init = async () => {
-  const authService = new AuthService();
   const userService = new UserService();
+  const authService = new AuthService(userService);
   const notificationService = new NotificationService();
 
   const server = Hapi.server({

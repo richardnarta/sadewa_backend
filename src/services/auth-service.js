@@ -7,8 +7,8 @@ const UserService = require('../services/user-service');
 const ClientError = require('../exceptions/client-error');
 
 class AuthService {
-  constructor () {
-    this._userService = new UserService();
+  constructor (userService) {
+    this._userService = userService;
   }
 
   async sendUserEmailOTP(userEmail, userName) {

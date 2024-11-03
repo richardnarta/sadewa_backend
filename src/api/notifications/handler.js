@@ -1,6 +1,6 @@
 class NotificationHandler {
   constructor(service) {
-    this._notification_service = service.notification;
+    this._notificationService = service.notification;
 
     this.getUserNotificationHandler = this.getUserNotificationHandler.bind(this);
     this.getNotificationHandler = this.getNotificationHandler.bind(this);
@@ -10,7 +10,7 @@ class NotificationHandler {
   async getUserNotificationHandler(request, h) {
     const { userId } = request.auth;
 
-    const data = await this._notification_service.getUserNotificationList(userId);
+    const data = await this._notificationService.getUserNotificationList(userId);
 
     return h.response({
       error: false,
@@ -23,7 +23,7 @@ class NotificationHandler {
   async getNotificationHandler(request, h) {
     const { notificationId } = request.params;
 
-    const notificationData = await this._notification_service.getNotificationById(notificationId);
+    const notificationData = await this._notificationService.getNotificationById(notificationId);
 
     return h.response({
       error: false,
@@ -34,7 +34,7 @@ class NotificationHandler {
   async getNotificationAsReadHandler(request, h) {
     const { notificationId } = request.params;
 
-    await this._notification_service.markNotificationAsRead(notificationId);
+    await this._notificationService.markNotificationAsRead(notificationId);
 
     return h.response({
       error: false,
