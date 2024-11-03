@@ -12,6 +12,11 @@ const UserValidator = require('./validator/users');
 const jwtMiddleware = require('./middleware/jwt');
 const validateRoute = require('./middleware/route-validator');
 const ClientError = require('./exceptions/client-error');
+const WebSocket = require('ws');
+const webSocketHandler = require('./utils/websocket');
+const { verifyToken } = require('./utils/jwt');
+
+const webSocketClients = new Map();
 
 const init = async () => {
   const userService = new UserService();
@@ -84,6 +89,32 @@ const init = async () => {
         return h.redirect('/');
       }
     },
+  });
+
+  const wss = new WebSocket.Server({ noServer: true });
+
+  server.listener.on('upgrade', async (request, socket, head) => {
+    const url = new URL(request.url, `http://${request.headers.host}`);
+    const token = url.searchParams.get('token');
+
+    const decodedToken = await verifyToken(token);
+
+    if (decodedToken === null) {
+      socket.destroy();
+      return;
+    }
+
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, decodedToken.id);
+    });
+  });
+
+  wss.on('connection', (ws, userId) => {
+    if (!webSocketClients.has(userId)) {
+      webSocketClients.set(userId, new Set());
+    }
+
+    webSocketHandler(ws, webSocketClients, userId);
   });
 
   await server.start();
