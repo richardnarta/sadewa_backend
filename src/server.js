@@ -3,8 +3,10 @@ const Hapi = require('@hapi/hapi');
 const home = require('./api/home')
 const auth = require('./api/auth');
 const users = require('./api/users');
+const notifications = require('./api/notifications');
 const UserService = require('./services/user-service');
 const AuthService = require('./services/auth-service');
+const NotificationService = require('./services/notification-service');
 const AuthValidator = require('./validator/auth');
 const UserValidator = require('./validator/users');
 const jwtMiddleware = require('./middleware/jwt');
@@ -14,6 +16,7 @@ const ClientError = require('./exceptions/client-error');
 const init = async () => {
   const authService = new AuthService();
   const userService = new UserService();
+  const notificationService = new NotificationService();
 
   const server = Hapi.server({
       port: process.env.PORT,
@@ -46,6 +49,14 @@ const init = async () => {
           "user": userService
         },
         validator: UserValidator,
+      },
+    },
+    {
+      plugin: notifications,
+      options: {
+        service: {
+          "notification": notificationService,
+        },
       },
     }
   ]);
