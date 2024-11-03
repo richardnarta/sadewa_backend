@@ -3,7 +3,7 @@
 
 If you don't have [NodeJS](https://nodejs.org/en/download/package-manager), [Redis](https://redis.io/), [PostgreSQL](https://www.postgresql.org/) installed, install those first.
 
-If you don't have [Brevo](https://www.brevo.com/) service account for email messaging, register first.
+If you don't have [Brevo](https://www.brevo.com/) service account for email messaging, and [Firebase](https://firebase.google.com) service account for realtime database and cloud messaging, register first.
 
 ---
 
@@ -69,6 +69,12 @@ To run this project, you will need to add the following environment variables to
 `AUTH_SALT`=5
 
 `AUTH_EXPIRATION_SECONDS`=2629800
+
+### firebase configuration
+
+`FIREBASE_SERVICE_PATH`=path_to_your_firebase_service_account_file
+
+`REALTIME_DB_URL`=your_firebase_realtime_database_url
 
 
 ## Start Database Migration
