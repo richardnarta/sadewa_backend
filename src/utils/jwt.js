@@ -8,7 +8,7 @@ function generateToken(payload) {
   return jwt.sign(payload, secretKey, 
     {
       algorithm: algorithm,
-      expiresIn: expirationTime
+      expiresIn: Number(expirationTime)
     }
   );
 }
@@ -20,6 +20,7 @@ async function verifyToken(token) {
     );
     return decoded;
   } catch (error) {
+    console.log(error)
     return null;
   }
 }

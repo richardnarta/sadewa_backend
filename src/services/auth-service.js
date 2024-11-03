@@ -25,6 +25,7 @@ class AuthService {
     const password = payload.password;
 
     delete payload.password;
+    delete payload.notification_token;
     payload.id = user.id;
     payload.type = user.type;
     payload.email = user.email;
