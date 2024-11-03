@@ -5,6 +5,7 @@ const LoginPayloadSchema = Joi.object({
   password: Joi.string().pattern(
     new RegExp('^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$')
   ).required(),
+  notification_token: Joi.string().required(),
 });
 
 const ForgetPasswordPayloadSchema = Joi.object({

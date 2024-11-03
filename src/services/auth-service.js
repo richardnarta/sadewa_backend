@@ -28,6 +28,7 @@ class AuthService {
     payload.id = user.id;
     payload.type = user.type;
     payload.email = user.email;
+    payload.notification = payload.notification_token;
 
     const token = generateToken(payload);
 

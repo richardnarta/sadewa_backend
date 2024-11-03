@@ -46,7 +46,8 @@ async function jwtMiddleware(request, h) {
 
   request.auth = {
     userId: decoded.id,
-    userType: decoded.type
+    userType: decoded.type,
+    notificationToken: decoded.notification,
   };
 
   return h.continue;

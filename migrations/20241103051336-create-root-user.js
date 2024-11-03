@@ -14,7 +14,8 @@ module.exports = {
         name: 'Admin Tambak Udang Sadewa Farm',
         createdAt: new Date(),
         updatedAt: new Date(),
-        type: 'admin'
+        type: 'admin',
+        verified: true
       },
     ], {});
   },
