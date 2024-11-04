@@ -118,7 +118,7 @@ const init = async () => {
 
     const decodedToken = await verifyToken(token);
 
-    if (decodedToken === null) {
+    if (decodedToken === null || decodedToken.type === undefined) {
       socket.destroy();
       return;
     }

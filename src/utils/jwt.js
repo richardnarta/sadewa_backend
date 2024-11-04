@@ -20,7 +20,6 @@ async function verifyToken(token) {
     );
     return decoded;
   } catch (error) {
-    console.log(error)
     return null;
   }
 }

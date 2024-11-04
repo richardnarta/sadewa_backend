@@ -14,10 +14,10 @@ function webSocketHandler(ws, webSocketClients, userId) {
 
   const sendData = (sensorType) => {
     const data = {
-      temperature: Math.random() * 100,
-      pH: Math.random() * 14,
-      turbidity: Math.random() * 10,
-      salinity: Math.random() * 35,
+      temperature: Math.random() * (32 - 26) + 26,
+      pH: Math.random() * (8.5 - 7.5) + 7.5,
+      turbidity: Math.random() * (30 - 0) + 0,
+      salinity: Math.random() * (30 - 10) + 10,
     };
 
     if (subscriptions.has(sensorType)) {
@@ -26,11 +26,8 @@ function webSocketHandler(ws, webSocketClients, userId) {
   };
 
   setInterval(() => {
-    sendData('temperature');
-    sendData('pH');
-    sendData('turbidity');
-    sendData('salinity');
-  }, 3000);
+    subscriptions.forEach(sensorType => sendData(sensorType));
+  }, 2000);
 
   ws.on('close', () => {
     webSocketClients.delete(userId);
