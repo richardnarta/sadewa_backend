@@ -21,10 +21,22 @@ const validateRoute = require('./middleware/route-validator');
 const ClientError = require('./exceptions/client-error');
 const InternalServerError = require('./exceptions/internal-server-error');
 const WebSocket = require('ws');
-const webSocketHandler = require('./utils/websocket');
+const { webSocketHandler, sensorListener } = require('./utils/websocket');
 const { verifyToken } = require('./utils/jwt');
 
 const webSocketClients = new Map();
+const sensorData = {
+  temperature: null,
+  pH: null,
+  salinity: null,
+  turbidity: null,
+}
+const temporaryData = {
+  temperature: [],
+  pH: [],
+  salinity: [],
+  turbidity: [],
+}
 
 const init = async () => {
   const userService = new UserService();
@@ -123,6 +135,8 @@ const init = async () => {
     },
   });
 
+  sensorListener(temporaryData, sensorData);
+
   const wss = new WebSocket.Server({ noServer: true });
 
   server.listener.on('upgrade', async (request, socket, head) => {
@@ -143,10 +157,15 @@ const init = async () => {
 
   wss.on('connection', (ws, userId) => {
     if (!webSocketClients.has(userId)) {
-      webSocketClients.set(userId, new Set());
+      webSocketClients.set(userId, {
+        temperature: [],
+        pH: [],
+        salinity: [],
+        turbidity: []
+      });
     }
 
-    webSocketHandler(ws, webSocketClients, userId);
+    webSocketHandler(ws, webSocketClients, userId, temporaryData, sensorData);
   });
 
   await server.start();
