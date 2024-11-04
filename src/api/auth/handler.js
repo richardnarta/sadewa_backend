@@ -13,10 +13,16 @@ class AuthHandler {
   async postAuthLoginHandler(request, h) {
     this._validator.validateLoginPayload(request.payload);
 
-    const { username } = request.payload;
+    const { username, email } = request.payload;
 
-    const user = await this._userService.getUserByUsername(username);
-
+    let user = null;
+    
+    if (username === undefined) {
+      user = await this._userService.getUserByEmail(email);
+    } else {
+      user = await this._userService.getUserByUsername(username);
+    }
+    
     const token = await this._authService.addUserTokenToRedis(
       request.payload, user);
 
