@@ -110,13 +110,22 @@ class UserService {
     const registeredEmail = users.map(user => user.dataValues.email);
 
     if (registeredEmail.includes(user_email)) {
-      throw new ClientError('Email telah terdaftar');
+      const user = await this.isUserVerified({ email: user_email });
+      if (user.verified) {
+        throw new ClientError('Email telah terdaftar');
+      } else {
+        await this.sendUserEmailOTP(user_email, user_name);
+        return user.id;
+      }
     }
 
     const registeredUsername = users.map(user => user.dataValues.username);
 
     if (registeredUsername.includes(user_username)) {
-      throw new ClientError('Username telah digunakan');
+      const user = await this.isUserVerified({ username: user_username });
+      if (user.verified) {
+        throw new ClientError('Username telah digunakan');
+      }
     }
 
     const newUser = await User.create({
@@ -191,6 +200,17 @@ class UserService {
         id: userId
       }
     });
+  }
+
+  async isUserVerified(params) {
+    const user = await User.findAll({
+      where: params
+    });
+
+    return {
+      id: user[0].dataValues.id,
+      verified: user[0].dataValues.verified,
+    }
   }
 }
 
