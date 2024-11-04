@@ -11,11 +11,16 @@ const availableRoutes = [
   '/notifications',
   '/notifications/{notificationId}',
   '/notifications/{notificationId}/read',
+  'configuration',
+  'configuration/{sensorId}/start',
+  'configuration/{sensorId}/stop',
+  'configuration/{sensorId}',
 ];
 
 const routePatterns = availableRoutes.map(route => {
   return route.replace(/\{userId\}/g, '[a-zA-Z0-9_-]{16}')
-  .replace(/\{notificationId\}/g, '[1-9][0-9]*');
+  .replace(/\{notificationId\}/g, '[1-9][0-9]*')
+  .replace(/\{sensorId\}/g, '[a-zA-Z][0-9]*');
 });
 
 function validateRoute(incomingRoute) {

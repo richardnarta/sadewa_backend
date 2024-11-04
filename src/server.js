@@ -4,14 +4,19 @@ const home = require('./api/home')
 const auth = require('./api/auth');
 const users = require('./api/users');
 const notifications = require('./api/notifications');
+const configuration = require('./api/configuration');
 const UserService = require('./services/user-service');
 const AuthService = require('./services/auth-service');
 const NotificationService = require('./services/notification-service');
+const ConfigurationService = require('./services/configuration-service');
+const FirebaseService = require('./services/firebase-service');
 const AuthValidator = require('./validator/auth');
 const UserValidator = require('./validator/users');
+const ConfigurationValidator = require('./validator/configration');
 const jwtMiddleware = require('./middleware/jwt');
 const validateRoute = require('./middleware/route-validator');
 const ClientError = require('./exceptions/client-error');
+const InternalServerError = require('./exceptions/internal-server-error');
 const WebSocket = require('ws');
 const webSocketHandler = require('./utils/websocket');
 const { verifyToken } = require('./utils/jwt');
@@ -22,6 +27,8 @@ const init = async () => {
   const userService = new UserService();
   const authService = new AuthService(userService);
   const notificationService = new NotificationService();
+  const firebaseService = new FirebaseService();
+  const configurationService = new ConfigurationService(firebaseService);
 
   const server = Hapi.server({
       port: process.env.PORT,
@@ -63,6 +70,15 @@ const init = async () => {
           "notification": notificationService,
         },
       },
+    },
+    {
+      plugin: configuration,
+      options: {
+        service: {
+          "configuration": configurationService,
+        },
+        validator: ConfigurationValidator,
+      },
     }
   ]);
 
@@ -71,7 +87,10 @@ const init = async () => {
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
-    if (response instanceof ClientError) {
+    if (
+      response instanceof ClientError ||
+      response instanceof InternalServerError
+    ) {
       return h.response({
         error: true,
         message: response.message,
