@@ -59,6 +59,59 @@ class FirebaseService {
       }
     });
   }
+
+  async getActutorData() {
+    const data = {}
+
+    let ref = this._db.ref('feeding_schedule');
+
+    let snapshot = await ref.once('value');
+    data.feeder = {
+      feeder_status: await this.getFeederStatus(),
+      schedule_1: snapshot.val().schedule_1,
+      schedule_2: snapshot.val().schedule_2,
+      schedule_3: snapshot.val().schedule_3,
+      schedule_4: snapshot.val().schedule_4,
+    }
+
+    ref = this._db.ref('aerator');
+    
+    snapshot = await ref.once('value');
+    data.aerator = {
+      off_minutes_before: snapshot.val().aeratorOffMinutesBefore,
+      on_minutes_after: snapshot.val().aeratorOnMinutesAfter
+    }
+
+    return data;
+  }
+
+  async getFeederStatus() {
+    const ref = this._db.ref('isi_pakan');
+
+    const snapshot = await ref.once('value');
+
+    return snapshot.val();
+  }
+
+  async setFeederSchedule(schedule, data) {
+    const ref = this._db.ref(`feeding_schedule/${schedule}`);
+
+    await ref.update(data, (error) => {
+      if (error) {
+        throw new InternalServerError('Terjadi kesalahan, silahkan coba lagi');
+      }
+    });
+  }
+
+  async setAeratorSchedule(data) {
+    const ref = this._db.ref('aerator');
+
+    await ref.update(data, (error) => {
+      if (error) {
+        throw new InternalServerError('Terjadi kesalahan, silahkan coba lagi');
+      }
+    });
+  }
 }
 
 module.exports = FirebaseService;

@@ -15,6 +15,9 @@ const availableRoutes = [
   'configuration/{sensorId}/start',
   'configuration/{sensorId}/stop',
   'configuration/{sensorId}',
+  '/configuration/actuator',
+  '/configuration/feeder/schedule',
+  '/configuration/aerator/schedule',
 ];
 
 const routePatterns = availableRoutes.map(route => {

@@ -108,6 +108,46 @@ class ConfigurationService {
         return 'kekeruhan';
     }
   }
+
+  async getAllActuatorConfiguration() {
+    return await this._firebaseService.getActutorData();
+  }
+
+  async changeFeederConfiguration(payloads) {
+    const payloadKeys = Object.keys(payloads);
+
+    const uniqueKeys = Array.from(
+      new Set(payloadKeys.map(key => { return key.slice(0, 10) }))
+    );
+
+    for (const schedule of uniqueKeys) {
+      const updatedData = {}
+      if (payloads[`${schedule}_time`] != undefined) {
+        updatedData.time = payloads[`${schedule}_time`];
+      }
+      if (payloads[`${schedule}_amount`] != undefined) {
+        updatedData.amount = Number(payloads[`${schedule}_amount`]);
+      }
+
+      if (Object.keys(payloads).length > 0) {
+        await this._firebaseService.setFeederSchedule(schedule, updatedData);
+      }
+    }
+  }
+
+  async changeAeratorConfiguration(payloads) {
+    const updatedData = {}
+
+    if (payloads.off_minutes_before != undefined) {
+      updatedData.aeratorOffMinutesBefore = Number(payloads.off_minutes_before);
+    }
+
+    if (payloads.on_minutes_after != undefined) {
+      updatedData.aeratorOnMinutesAfter = Number(payloads.on_minutes_after);
+    }
+
+    await this._firebaseService.setAeratorSchedule(updatedData);
+  }
 }
 
 module.exports = ConfigurationService;

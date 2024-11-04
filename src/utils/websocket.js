@@ -8,10 +8,10 @@ function sensorListener(temporaryData, data) {
     data.salinity = (Math.random() * (30 - 10) + 10).toFixed(2);
 
     if (
-      temporaryData.temperature.length == 10 ||
-      temporaryData.pH.length == 10 ||
-      temporaryData.salinity.length == 10 ||
-      temporaryData.turbidity.length == 10
+      temporaryData.temperature.length == 20 ||
+      temporaryData.pH.length == 20 ||
+      temporaryData.salinity.length == 20 ||
+      temporaryData.turbidity.length == 20
     ) {
       temporaryData.temperature.shift();
       temporaryData.pH.shift();

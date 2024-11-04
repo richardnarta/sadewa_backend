@@ -1,7 +1,7 @@
 {
   "name": "sadewa_api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start-dev": "nodemon ./src/server.js",
@@ -12,7 +12,7 @@
     "migrate-down-all": "sequelize-cli db:migrate:undo:all"
   },
   "keywords": [],
-  "author": "",
+  "author": "Richard",
   "license": "ISC",
   "description": "",
   "dependencies": {
