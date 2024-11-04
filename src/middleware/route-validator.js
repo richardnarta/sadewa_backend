@@ -11,7 +11,7 @@ const availableRoutes = [
   '/notifications',
   '/notifications/{notificationId}',
   '/notifications/{notificationId}/read',
-  'configuration',
+  'configuration/sensor',
   'configuration/{sensorId}/start',
   'configuration/{sensorId}/stop',
   'configuration/{sensorId}',

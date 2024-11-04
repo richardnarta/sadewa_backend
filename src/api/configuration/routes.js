@@ -1,7 +1,7 @@
 const routes = (handler) => [
   {
     method: 'GET',
-    path: '/configuration',
+    path: '/configuration/sensor',
     handler: handler.getSensorConfigurationHandler,
     options: {
       plugins: {
