@@ -101,17 +101,33 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
+      temperatureStatus: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
       ph: {
         type: Sequelize.FLOAT,
         allowNull: true,
+      },
+      phStatus: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
       },
       salinity: {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
+      salinityStatus: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
       turbidity: {
         type: Sequelize.FLOAT,
         allowNull: true,
+      },
+      turbidityStatus: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
       },
     });
   },

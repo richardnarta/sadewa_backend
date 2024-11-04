@@ -16,9 +16,13 @@ module.exports = (sequelize, DataTypes) => {
   History.init({
     timestamp: DataTypes.DATE,
     temperature: DataTypes.FLOAT,
+    temperatureStatus: DataTypes.BOOLEAN,
     ph: DataTypes.FLOAT,
+    phStatus: DataTypes.BOOLEAN,
     salinity: DataTypes.FLOAT,
+    salinityStatus: DataTypes.BOOLEAN,
     turbidity: DataTypes.FLOAT,
+    turbidityStatus: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'History',
