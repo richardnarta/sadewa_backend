@@ -26,6 +26,8 @@ function sensorListener(temporaryData, data, firebaseService) {
   firebaseService.listenToFeederStatus();
   firebaseService.listenToSensorConfiguration();
   firebaseService.listenToSensorStatus();
+  firebaseService.listenToFeederSchedule();
+  firebaseService.listenToAeratorSchedule();
 }
 
 function webSocketHandler(ws, webSocketClients, userId, temporaryData, data) {

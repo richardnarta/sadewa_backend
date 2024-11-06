@@ -119,7 +119,7 @@ class FirebaseService {
     });
   }
 
-  async sendNotification(title, body, first = false) {
+  async sendNotification(title, body, level, first = false) {
     if (first) {
       return;
     }
@@ -138,11 +138,18 @@ class FirebaseService {
         })
       );
 
+      await this._notificationService.createNotification(
+        title, 
+        body, 
+        level, 
+        userId
+      )
+
       const messages = generateNotification(
         title, body, notificationTokens);
 
       try {
-        this._messaging.sendEach(messages);
+        await this._messaging.sendEach(messages);
       } catch (error) {
         console.log(error);
       }
@@ -161,6 +168,7 @@ class FirebaseService {
         await this.sendNotification(
           '[Peringatan] Pakan Ternak Otomatis', 
           `Jumlah pakan sudah habis. Mohon untuk segera mengisinya kembali.\n\n${now}`,
+          'high',
           first
         );
       }
@@ -178,14 +186,16 @@ class FirebaseService {
         const sensorStatus = snapshot.val();
         if (sensorStatus) {
           await this.sendNotification(
-            '[Peringatan] Sensor Suhu', 
+            '[Pemberitahuan] Sensor Suhu', 
             `Sensor suhu berhasil diaktifkan.\n\n${now}`,
+            'low',
             firstTemperature
           );
         } else {
           await this.sendNotification(
-            '[Peringatan] Sensor Suhu', 
+            '[Pemberitahuan] Sensor Suhu', 
             `Sensor suhu berhasil dinonaktifkan.\n\n${now}`,
+            'medium',
             firstTemperature
           );
         }
@@ -202,14 +212,16 @@ class FirebaseService {
 
         if (sensorStatus) {
           await this.sendNotification(
-            '[Peringatan] Sensor PH', 
+            '[Pemberitahuan] Sensor PH', 
             `Sensor PH berhasil diaktifkan.\n\n${now}`,
+            'low',
             firstPH
           );
         } else {
           await this.sendNotification(
-            '[Peringatan] Sensor PH', 
+            '[Pemberitahuan] Sensor PH', 
             `Sensor PH berhasil dinonaktifkan.\n\n${now}`,
+            'medium',
             firstPH
           );
         }
@@ -226,14 +238,16 @@ class FirebaseService {
 
         if (sensorStatus) {
           await this.sendNotification(
-            '[Peringatan] Sensor Salinitas', 
+            '[Pemberitahuan] Sensor Salinitas', 
             `Sensor salinitas berhasil diaktifkan.\n\n${now}`,
+            'low',
             firstSalinity
           );
         } else {
           await this.sendNotification(
-            '[Peringatan] Sensor Salinitas', 
+            '[Pemberitahuan] Sensor Salinitas', 
             `Sensor salinitas berhasil dinonaktifkan.\n\n${now}`,
+            'medium',
             firstSalinity
           );
         }
@@ -250,14 +264,16 @@ class FirebaseService {
 
         if (sensorStatus) {
           await this.sendNotification(
-            '[Peringatan] Sensor Kekeruhan', 
+            '[Pemberitahuan] Sensor Kekeruhan', 
             `Sensor kekeruhan berhasil diaktifkan.\n\n${now}`,
+            'low',
             firstTurbidity
           );
         } else {
           await this.sendNotification(
-            '[Peringatan] Sensor Kekeruhan', 
+            '[Pemberitahuan] Sensor Kekeruhan', 
             `Sensor kekeruhan berhasil dinonaktifkan.\n\n${now}`,
+            'medium',
             firstTurbidity
           );
         }
@@ -285,6 +301,7 @@ class FirebaseService {
             `Sensor suhu menunjukkan nilai \
             ${Number(dataTemperature).toFixed(2)}°C yang berada di luar batas wajar.\
             \n\n${now}`,
+            'high',
             firstTemperature
           );
         }
@@ -310,6 +327,7 @@ class FirebaseService {
             `Sensor PH menunjukkan nilai \
             ${Number(dataPH).toFixed(2)} yang berada di luar batas wajar.\
             \n\n${now}`,
+            'high',
             firstPH
           );
         }
@@ -335,6 +353,7 @@ class FirebaseService {
             `Sensor salinitas menunjukkan nilai \
             ${Number(dataSalinity).toFixed(2)} PPT yang berada di luar batas wajar.\
             \n\n${now}`,
+            'high',
             firstSalinity
           );
         }
@@ -360,11 +379,48 @@ class FirebaseService {
             `Sensor PH menunjukkan nilai \
             ${Number(dataTurbidity).toFixed(2)} NTU yang berada di luar batas wajar.\
             \n\n${now}`,
+            'high',
             firstTurbidity
           );
         }
 
         firstTurbidity = false;
+    });
+  }
+
+  listenToFeederSchedule() {
+    let first = true;
+    const ref = this._db.ref('feeding_schedule');
+
+    ref.on('value', async(snapshot) => {
+      const now = getCurrentDateTime();
+
+      await this.sendNotification(
+        '[Pmberitahuan] Pakan Ternak Otomatis', 
+        `Jadwal atau jumlah pakan ternak otomatis berhasil diubah\n\n${now}`,
+        'low',
+        first
+      );
+
+      first = false
+    });
+  }
+
+  listenToAeratorSchedule() {
+    let first = true;
+    const ref = this._db.ref('aerator');
+
+    ref.on('value', async(snapshot) => {
+      const now = getCurrentDateTime();
+
+      await this.sendNotification(
+        '[Pmberitahuan] Kincir Air Otomatis', 
+        `Jadwal pengaktifan dan penonaktifan kincir air berhasil diubah\n\n${now}`,
+        'low',
+        first
+      );
+
+      first = false
     });
   }
 }

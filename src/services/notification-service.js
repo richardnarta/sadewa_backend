@@ -42,6 +42,18 @@ class NotificationService {
       }
     });
   }
+
+  async createNotification(title, body, level, users) {
+    for (const user of users) {
+      await Notification.create({
+        timestamp: new Date(),
+        level: level,
+        title: title,
+        body: body,
+        userId: user
+      });
+    }
+  }
 }
 
 module.exports = NotificationService;
