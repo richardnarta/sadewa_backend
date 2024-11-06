@@ -9,7 +9,7 @@ function sensorListener(temporaryData, data, firebaseService) {
       data.temperature = sensorStatus.suhu ? (Math.random() * (32 - 26) + 26).toFixed(2) : '0.00';
       data.pH = sensorStatus.ph ? (Math.random() * (8.5 - 7.5) + 7.5).toFixed(2) : '0.00';
       data.turbidity = sensorStatus.turbidity ? (Math.random() * (30 - 0) + 0).toFixed(2) : '0.00';
-      data.salinity = sensorStatus.salinity ? (Math.random() * (30 - 10) + 10).toFixed(2) : '0.00';
+      data.salinity = sensorStatus.salinitas ? (Math.random() * (30 - 10) + 10).toFixed(2) : '0.00';
     });
 
     if (
