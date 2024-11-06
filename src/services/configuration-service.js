@@ -5,24 +5,6 @@ class ConfigurationService {
     this._firebaseService = firebaseService;
   }
 
-  async getAllSensorConfiguration() {
-    const temperature = await this._firebaseService.getSensorThreshold('temperature');
-    const pH = await this._firebaseService.getSensorThreshold('pH');
-    const salinity = await this._firebaseService.getSensorThreshold('salinity');
-    const turbidity = await this._firebaseService.getSensorThreshold('turbidity');
-
-    return {
-      max_temperature: temperature.max,
-      min_temperature: temperature.min,
-      max_ph: pH.max,
-      min_pH: pH.min,
-      max_salinity: salinity.max,
-      min_salinity: salinity.min,
-      max_turbidity: turbidity.max,
-      min_turbidity: turbidity.min
-    }
-  }
-
   async getSensorConfigurationById(sensorId) {
     if (sensorId == 'ph') {
       sensorId = 'pH';
@@ -34,9 +16,12 @@ class ConfigurationService {
       sensorId = 'ph';
     }
 
+    const sensorStatus = await this._firebaseService.getSensorStatus(sensorId);
+
     return {
       max: sensorData.max,
       min: sensorData.min,
+      status: sensorStatus
     }
   }
 

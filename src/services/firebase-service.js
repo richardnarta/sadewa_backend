@@ -2,7 +2,6 @@ const { db, message } = require('../../config/firebase-config');
 const { generateNotification } = require('../utils/notification');
 const { getNotificationTokenAndId } = require('../utils/jwt');
 const { getAvailableJWT } = require('../utils/redis');
-const { getCurrentDateTime } = require('../utils/time');
 const InternalServerError = require('../exceptions/internal-server-error');
 
 class FirebaseService {
@@ -26,6 +25,18 @@ class FirebaseService {
     result.min = snapshot.val();
     
     return result;
+  }
+
+  async getSensorStatus(sensor) {
+    if (sensor == 'salinity') {
+      sensor = 'salinitas';
+    } else if (sensor == 'temperature') {
+      sensor = 'suhu'
+    }
+
+    const ref = this._db.ref(`status_sensor/${sensor}`);
+
+    return (await ref.once('value')).val();
   }
 
   async updateSensorStatus(sensor, value) {
@@ -161,13 +172,12 @@ class FirebaseService {
     let first = true;
 
     ref.on('value', async (snapshot) => {
-      const now = getCurrentDateTime();
       const data = snapshot.val();
 
       if (!data) {
         await this.sendNotification(
           '[Peringatan] Pakan Ternak Otomatis', 
-          `Jumlah pakan sudah habis. Mohon untuk segera mengisinya kembali.\n\n${now}`,
+          `Jumlah pakan sudah habis. Mohon untuk segera mengisinya kembali.\n`,
           'high',
           first
         );
@@ -182,19 +192,18 @@ class FirebaseService {
 
     this._db.ref('status_sensor/suhu').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const sensorStatus = snapshot.val();
         if (sensorStatus) {
           await this.sendNotification(
             '[Pemberitahuan] Sensor Suhu', 
-            `Sensor suhu berhasil diaktifkan.\n\n${now}`,
+            `Sensor suhu berhasil diaktifkan.\n`,
             'low',
             firstTemperature
           );
         } else {
           await this.sendNotification(
             '[Pemberitahuan] Sensor Suhu', 
-            `Sensor suhu berhasil dinonaktifkan.\n\n${now}`,
+            `Sensor suhu berhasil dinonaktifkan.\n`,
             'medium',
             firstTemperature
           );
@@ -207,20 +216,19 @@ class FirebaseService {
 
     this._db.ref('status_sensor/ph').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const sensorStatus = snapshot.val();
 
         if (sensorStatus) {
           await this.sendNotification(
             '[Pemberitahuan] Sensor PH', 
-            `Sensor PH berhasil diaktifkan.\n\n${now}`,
+            `Sensor PH berhasil diaktifkan.\n`,
             'low',
             firstPH
           );
         } else {
           await this.sendNotification(
             '[Pemberitahuan] Sensor PH', 
-            `Sensor PH berhasil dinonaktifkan.\n\n${now}`,
+            `Sensor PH berhasil dinonaktifkan.\n`,
             'medium',
             firstPH
           );
@@ -233,20 +241,19 @@ class FirebaseService {
 
     this._db.ref('status_sensor/salinitas').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const sensorStatus = snapshot.val();
 
         if (sensorStatus) {
           await this.sendNotification(
             '[Pemberitahuan] Sensor Salinitas', 
-            `Sensor salinitas berhasil diaktifkan.\n\n${now}`,
+            `Sensor salinitas berhasil diaktifkan.\n`,
             'low',
             firstSalinity
           );
         } else {
           await this.sendNotification(
             '[Pemberitahuan] Sensor Salinitas', 
-            `Sensor salinitas berhasil dinonaktifkan.\n\n${now}`,
+            `Sensor salinitas berhasil dinonaktifkan.\n`,
             'medium',
             firstSalinity
           );
@@ -259,20 +266,19 @@ class FirebaseService {
 
     this._db.ref('status_sensor/turbidity').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const sensorStatus = snapshot.val();
 
         if (sensorStatus) {
           await this.sendNotification(
             '[Pemberitahuan] Sensor Kekeruhan', 
-            `Sensor kekeruhan berhasil diaktifkan.\n\n${now}`,
+            `Sensor kekeruhan berhasil diaktifkan.\n`,
             'low',
             firstTurbidity
           );
         } else {
           await this.sendNotification(
             '[Pemberitahuan] Sensor Kekeruhan', 
-            `Sensor kekeruhan berhasil dinonaktifkan.\n\n${now}`,
+            `Sensor kekeruhan berhasil dinonaktifkan.\n`,
             'medium',
             firstTurbidity
           );
@@ -287,7 +293,6 @@ class FirebaseService {
 
     this._db.ref('sensorData/temperature').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const dataTemperature = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'temperature');
@@ -299,8 +304,7 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor Suhu', 
             `Sensor suhu menunjukkan nilai \
-            ${Number(dataTemperature).toFixed(2)}°C yang berada di luar batas wajar.\
-            \n\n${now}`,
+            ${Number(dataTemperature).toFixed(2)}°C yang berada di luar batas wajar.\n`,
             'high',
             firstTemperature
           );
@@ -313,7 +317,6 @@ class FirebaseService {
 
     this._db.ref('sensorData/pH').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const dataPH = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'ph');
@@ -325,8 +328,7 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor PH', 
             `Sensor PH menunjukkan nilai \
-            ${Number(dataPH).toFixed(2)} yang berada di luar batas wajar.\
-            \n\n${now}`,
+            ${Number(dataPH).toFixed(2)} yang berada di luar batas wajar.\n`,
             'high',
             firstPH
           );
@@ -339,7 +341,6 @@ class FirebaseService {
 
     this._db.ref('sensorData/salinity').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const dataSalinity = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'salinity');
@@ -351,8 +352,7 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor Salinitas', 
             `Sensor salinitas menunjukkan nilai \
-            ${Number(dataSalinity).toFixed(2)} PPT yang berada di luar batas wajar.\
-            \n\n${now}`,
+            ${Number(dataSalinity).toFixed(2)} PPT yang berada di luar batas wajar.\n`,
             'high',
             firstSalinity
           );
@@ -365,7 +365,6 @@ class FirebaseService {
 
     this._db.ref('sensorData/turbidity').on(
       'value', async(snapshot) => {
-        const now = getCurrentDateTime();
         const dataTurbidity = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'turbidity');
@@ -377,8 +376,7 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor Kekeruhan', 
             `Sensor PH menunjukkan nilai \
-            ${Number(dataTurbidity).toFixed(2)} NTU yang berada di luar batas wajar.\
-            \n\n${now}`,
+            ${Number(dataTurbidity).toFixed(2)} NTU yang berada di luar batas wajar.\n`,
             'high',
             firstTurbidity
           );
@@ -393,11 +391,9 @@ class FirebaseService {
     const ref = this._db.ref('feeding_schedule');
 
     ref.on('value', async(snapshot) => {
-      const now = getCurrentDateTime();
-
       await this.sendNotification(
         '[Pmberitahuan] Pakan Ternak Otomatis', 
-        `Jadwal atau jumlah pakan ternak otomatis berhasil diubah\n\n${now}`,
+        `Jadwal atau jumlah pakan ternak otomatis berhasil diubah\n`,
         'low',
         first
       );
@@ -411,11 +407,9 @@ class FirebaseService {
     const ref = this._db.ref('aerator');
 
     ref.on('value', async(snapshot) => {
-      const now = getCurrentDateTime();
-
       await this.sendNotification(
         '[Pmberitahuan] Kincir Air Otomatis', 
-        `Jadwal pengaktifan dan penonaktifan kincir air berhasil diubah\n\n${now}`,
+        `Jadwal pengaktifan dan penonaktifan kincir air berhasil diubah\n`,
         'low',
         first
       );

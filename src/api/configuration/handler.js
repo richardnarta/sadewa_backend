@@ -3,7 +3,6 @@ class ConfigurationHandler {
     this._configurationService = service.configuration;
     this._validator = validator;
 
-    this.getSensorConfigurationHandler = this.getSensorConfigurationHandler.bind(this);
     this.getSensorConfigurationByIdHandler = this.getSensorConfigurationByIdHandler.bind(this);
     this.getSensorStartHandler = this.getSensorStartHandler.bind(this);
     this.getSensorStopHandler = this.getSensorStopHandler.bind(this);
@@ -11,15 +10,6 @@ class ConfigurationHandler {
     this.getActuatorConfigurationHandler = this.getActuatorConfigurationHandler.bind(this);
     this.putFeederScheduleHandler = this.putFeederScheduleHandler.bind(this);
     this.putAeratorScheduleHandler = this.putAeratorScheduleHandler.bind(this);
-  }
-
-  async getSensorConfigurationHandler(request, h) {
-    const sensorData = await this._configurationService.getAllSensorConfiguration();
-
-    return h.response({
-      error: false,
-      data: sensorData
-    }).code(200);
   }
 
   async getSensorConfigurationByIdHandler(request, h) {

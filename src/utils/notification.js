@@ -10,11 +10,7 @@ function generateNotification(
           notification: {
             title: title,
             body: body,
-            icon: 'https://cdn.discordapp.com\
-            /attachments/1119449485819514962\
-            /1303398345016082574/logo_side_bar.png\
-            ?ex=672c448d&is=672af30d\
-            &hm=6c8c25bbd51dff12d68e157b038577a41869270d45892d79c53d294cbefc6fd1&',
+            icon: 'https://cdn.discordapp.com/attachments/1119449485819514962/1303398345016082574/logo_side_bar.png?ex=672b9bcd&is=672a4a4d&hm=a06250d87fc3001a45f281126415811418d14094228d9ff6323a7610a8f03606&',
             click_action: 'http://localhost:4200/'
           }
         },
