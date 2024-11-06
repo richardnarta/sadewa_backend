@@ -135,7 +135,7 @@ const init = async () => {
     },
   });
 
-  sensorListener(temporaryData, sensorData);
+  sensorListener(temporaryData, sensorData, firebaseService);
 
   const wss = new WebSocket.Server({ noServer: true });
 

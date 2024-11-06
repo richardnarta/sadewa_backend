@@ -24,7 +24,14 @@ async function verifyToken(token) {
   }
 }
 
+async function getNotificationToken(token) {
+  const jwt = await verifyToken(token);
+
+  return jwt.notification;
+}
+
 module.exports = {
   generateToken,
   verifyToken,
+  getNotificationToken,
 };

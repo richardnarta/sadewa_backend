@@ -1,6 +1,4 @@
-const db = require('../../config/firebase-config');
-
-function sensorListener(temporaryData, data) {
+function sensorListener(temporaryData, data, firebaseService) {
   setInterval(() => {
     data.temperature = (Math.random() * (32 - 26) + 26).toFixed(2);
     data.pH = (Math.random() * (8.5 - 7.5) + 7.5).toFixed(2);
@@ -24,6 +22,10 @@ function sensorListener(temporaryData, data) {
     temporaryData.salinity.push(Number(data.salinity));
     temporaryData.turbidity.push(Number(data.turbidity));
   }, 2000);
+
+  firebaseService.listenToFeederStatus();
+  firebaseService.listenToSensorConfiguration();
+  firebaseService.listenToSensorStatus();
 }
 
 function webSocketHandler(ws, webSocketClients, userId, temporaryData, data) {

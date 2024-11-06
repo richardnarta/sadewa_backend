@@ -28,10 +28,27 @@ async function extendTokenExpire(key) {
   await client.expire(key, expirationTime);
 }
 
+async function getAvailableJWT() {
+  const client = await getClient();
+
+  let cursor = '0';
+  const suffix = ':token';
+
+  const reply = await client.scan(cursor, { COUNT: 100 });
+  const keys = reply.keys;
+
+  const filteredKeys = keys.filter(key => key.endsWith(suffix));
+  
+  return await Promise.all(filteredKeys.map(async (key)=> {
+    return await getToken(key);
+  }));
+}
+
 module.exports = {
   storeToken,
   storeOTP,
   getToken,
   removeToken,
   extendTokenExpire,
+  getAvailableJWT,
 };
