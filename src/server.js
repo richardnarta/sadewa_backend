@@ -42,7 +42,7 @@ const init = async () => {
   const userService = new UserService();
   const authService = new AuthService(userService);
   const notificationService = new NotificationService();
-  const firebaseService = new FirebaseService();
+  const firebaseService = new FirebaseService(notificationService);
   const configurationService = new ConfigurationService(firebaseService);
   const historyService = new HistoryService();
 

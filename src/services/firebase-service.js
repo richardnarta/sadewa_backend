@@ -1,14 +1,15 @@
 const { db, message } = require('../../config/firebase-config');
 const { generateNotification } = require('../utils/notification');
-const { getNotificationToken } = require('../utils/jwt');
+const { getNotificationTokenAndId } = require('../utils/jwt');
 const { getAvailableJWT } = require('../utils/redis');
 const { getCurrentDateTime } = require('../utils/time');
 const InternalServerError = require('../exceptions/internal-server-error');
 
 class FirebaseService {
-  constructor() {
+  constructor(notificationService) {
     this._db = db;
     this._messaging = message;
+    this._notificationService = notificationService;
   }
 
   async getSensorThreshold(sensor) {
@@ -118,13 +119,22 @@ class FirebaseService {
     });
   }
 
-  async sendNotification(title, body) {
+  async sendNotification(title, body, first = false) {
+    if (first) {
+      return;
+    }
+
     let tokens = await getAvailableJWT();
 
     if (tokens.length > 0) {
+      const userId = [];
       const notificationTokens = await Promise.all(
         tokens.map(async (key) => {
-          await getNotificationToken(key);
+          const data = await getNotificationTokenAndId(key);
+
+          userId.push(data.id);
+
+          return data.notification;
         })
       );
 
@@ -141,6 +151,7 @@ class FirebaseService {
 
   listenToFeederStatus() {
     const ref = this._db.ref('isi_pakan');
+    let first = true;
 
     ref.on('value', async (snapshot) => {
       const now = getCurrentDateTime();
@@ -150,29 +161,39 @@ class FirebaseService {
         await this.sendNotification(
           '[Peringatan] Pakan Ternak Otomatis', 
           `Jumlah pakan sudah habis. Mohon untuk segera mengisinya kembali.\n\n${now}`,
+          first
         );
       }
+
+      first = false;
     });
   }
 
   listenToSensorStatus() {
+    let firstTemperature = true;
+
     this._db.ref('status_sensor/suhu').on(
       'value', async(snapshot) => {
         const now = getCurrentDateTime();
         const sensorStatus = snapshot.val();
-
         if (sensorStatus) {
           await this.sendNotification(
             '[Peringatan] Sensor Suhu', 
             `Sensor suhu berhasil diaktifkan.\n\n${now}`,
+            firstTemperature
           );
         } else {
           await this.sendNotification(
             '[Peringatan] Sensor Suhu', 
             `Sensor suhu berhasil dinonaktifkan.\n\n${now}`,
+            firstTemperature
           );
         }
+
+        firstTemperature = false;
     });
+
+    let firstPH = true;
 
     this._db.ref('status_sensor/ph').on(
       'value', async(snapshot) => {
@@ -183,14 +204,20 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor PH', 
             `Sensor PH berhasil diaktifkan.\n\n${now}`,
+            firstPH
           );
         } else {
           await this.sendNotification(
             '[Peringatan] Sensor PH', 
             `Sensor PH berhasil dinonaktifkan.\n\n${now}`,
+            firstPH
           );
         }
+
+        firstPH = false;
     });
+
+    let firstSalinity = true;
 
     this._db.ref('status_sensor/salinitas').on(
       'value', async(snapshot) => {
@@ -201,14 +228,20 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor Salinitas', 
             `Sensor salinitas berhasil diaktifkan.\n\n${now}`,
+            firstSalinity
           );
         } else {
           await this.sendNotification(
             '[Peringatan] Sensor Salinitas', 
             `Sensor salinitas berhasil dinonaktifkan.\n\n${now}`,
+            firstSalinity
           );
         }
+
+        firstSalinity = false;
     });
+
+    let firstTurbidity = true;
 
     this._db.ref('status_sensor/turbidity').on(
       'value', async(snapshot) => {
@@ -219,17 +252,23 @@ class FirebaseService {
           await this.sendNotification(
             '[Peringatan] Sensor Kekeruhan', 
             `Sensor kekeruhan berhasil diaktifkan.\n\n${now}`,
+            firstTurbidity
           );
         } else {
           await this.sendNotification(
             '[Peringatan] Sensor Kekeruhan', 
             `Sensor kekeruhan berhasil dinonaktifkan.\n\n${now}`,
+            firstTurbidity
           );
         }
+
+        firstTurbidity = false;
     });
   }
 
   listenToSensorConfiguration() {
+    let firstTemperature = true;
+
     this._db.ref('sensorData/temperature').on(
       'value', async(snapshot) => {
         const now = getCurrentDateTime();
@@ -239,15 +278,21 @@ class FirebaseService {
 
         if (
           dataTemperature < threshold.min ||
-          dataTemperature > threshold.max) {
+          dataTemperature > threshold.max
+        ) {
           await this.sendNotification(
             '[Peringatan] Sensor Suhu', 
             `Sensor suhu menunjukkan nilai \
             ${Number(dataTemperature).toFixed(2)}°C yang berada di luar batas wajar.\
             \n\n${now}`,
+            firstTemperature
           );
         }
+
+        firstTemperature = false;
     });
+
+    let firstPH = true;
 
     this._db.ref('sensorData/pH').on(
       'value', async(snapshot) => {
@@ -258,15 +303,21 @@ class FirebaseService {
 
         if (
           dataPH < threshold.min ||
-          dataPH > threshold.max) {
+          dataPH > threshold.max
+        ) {
           await this.sendNotification(
             '[Peringatan] Sensor PH', 
             `Sensor PH menunjukkan nilai \
             ${Number(dataPH).toFixed(2)} yang berada di luar batas wajar.\
             \n\n${now}`,
+            firstPH
           );
         }
+
+        firstPH = false;
     });
+
+    let firstSalinity = true;
 
     this._db.ref('sensorData/salinity').on(
       'value', async(snapshot) => {
@@ -277,15 +328,21 @@ class FirebaseService {
 
         if (
           dataSalinity < threshold.min ||
-          dataSalinity > threshold.max) {
+          dataSalinity > threshold.max
+        ) {
           await this.sendNotification(
             '[Peringatan] Sensor Salinitas', 
             `Sensor salinitas menunjukkan nilai \
             ${Number(dataSalinity).toFixed(2)} PPT yang berada di luar batas wajar.\
             \n\n${now}`,
+            firstSalinity
           );
         }
+
+        firstSalinity = false;
     });
+
+    let firstTurbidity = true;
 
     this._db.ref('sensorData/turbidity').on(
       'value', async(snapshot) => {
@@ -296,14 +353,18 @@ class FirebaseService {
 
         if (
           dataTurbidity < threshold.min ||
-          dataTurbidity > threshold.max) {
+          dataTurbidity > threshold.max
+        ) {
           await this.sendNotification(
             '[Peringatan] Sensor Kekeruhan', 
             `Sensor PH menunjukkan nilai \
             ${Number(dataTurbidity).toFixed(2)} NTU yang berada di luar batas wajar.\
             \n\n${now}`,
+            firstTurbidity
           );
         }
+
+        firstTurbidity = false;
     });
   }
 }

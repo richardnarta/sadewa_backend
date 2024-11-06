@@ -3,7 +3,6 @@ const { generateForgetPasswordOTPHTML } = require('../utils/otp-html');
 const { generateOTPCode, verifyPassword } = require('../utils/auth');
 const { generateToken, verifyToken } = require('../utils/jwt');
 const { storeToken, removeToken, storeOTP, getToken } = require('../utils/redis');
-const UserService = require('../services/user-service');
 const ClientError = require('../exceptions/client-error');
 
 class AuthService {
@@ -25,11 +24,11 @@ class AuthService {
     const password = payload.password;
 
     delete payload.password;
-    delete payload.notification_token;
     payload.id = user.id;
     payload.type = user.type;
     payload.email = user.email;
     payload.notification = payload.notification_token;
+    delete payload.notification_token;
 
     const token = generateToken(payload);
 
