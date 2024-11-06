@@ -251,6 +251,7 @@ class FirebaseService {
 
     this._db.ref('sensorData/pH').on(
       'value', async(snapshot) => {
+        const now = getCurrentDateTime();
         const dataPH = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'ph');
@@ -269,6 +270,7 @@ class FirebaseService {
 
     this._db.ref('sensorData/salinity').on(
       'value', async(snapshot) => {
+        const now = getCurrentDateTime();
         const dataSalinity = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'salinity');
@@ -287,6 +289,7 @@ class FirebaseService {
 
     this._db.ref('sensorData/turbidity').on(
       'value', async(snapshot) => {
+        const now = getCurrentDateTime();
         const dataTurbidity = snapshot.val();
         const threshold = await this.getSensorThreshold(
           'turbidity');
