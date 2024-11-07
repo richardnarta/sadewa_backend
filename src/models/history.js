@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     salinityStatus: DataTypes.BOOLEAN,
     turbidity: DataTypes.FLOAT,
     turbidityStatus: DataTypes.BOOLEAN,
+    temperatureInfo: DataTypes.ENUM('Batas Maksimal', 'Stabil', 'Batas Minimum'),
+    phInfo: DataTypes.ENUM('Batas Maksimal', 'Stabil', 'Batas Minimum'),
+    salinityInfo: DataTypes.ENUM('Batas Maksimal', 'Stabil', 'Batas Minimum'),
+    turbidityInfo: DataTypes.ENUM('Batas Maksimal', 'Stabil', 'Batas Minimum'),
   }, {
     sequelize,
     modelName: 'History',

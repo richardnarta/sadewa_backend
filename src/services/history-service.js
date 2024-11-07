@@ -9,7 +9,7 @@ class HistoryService {
 
     page = Number(page).toFixed(0);
 
-    const limit = 10;
+    const limit = 6;
 
     const count = await History.count({
       group: [fn('DATE', col('timestamp'))],
@@ -37,8 +37,8 @@ class HistoryService {
 
     for (const date of historyDate) {
       data.push({
-        "date:": date,
-        "log": await this.getHistoryDetail(date)
+        date: date,
+        log: await this.getHistoryDetail(date)
       });
     }
 
@@ -71,12 +71,16 @@ class HistoryService {
         time: String(history.timestamp).slice(16, 21),
         temperature: history.temperature,
         temperature_status: history.temperatureStatus,
+        temperature_info: history.temperatureInfo,
         ph: history.ph,
         ph_status: history.phStatus,
+        ph_info: history.phInfo,
         salinity: history.salinity,
         salinity_status: history.salinityStatus,
+        salinity_info: history.salinityInfo,
         turbidity: history.turbidity,
-        turbidity_status: history.turbidityStatus
+        turbidity_status: history.turbidityStatus,
+        turbidity_info: history.turbidityInfo,
       }
     });
   }
