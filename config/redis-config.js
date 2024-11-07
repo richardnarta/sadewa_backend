@@ -29,6 +29,13 @@ const getClient = async () => {
   return redisClient;
 };
 
+const closeRedis = async () => {
+  if (redisClient && redisClient.isOpen) {
+    await redisClient.quit();
+  }
+};
+
 module.exports = {
-  getClient
+  getClient,
+  closeRedis
 };

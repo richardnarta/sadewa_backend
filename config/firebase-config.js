@@ -11,4 +11,12 @@ const db = admin.database();
 
 const message = admin.messaging();
 
-module.exports = { db , message };
+const closeFirebase = async () => {
+  await admin.app().delete();
+};
+
+module.exports = { 
+  db, 
+  message, 
+  closeFirebase 
+};

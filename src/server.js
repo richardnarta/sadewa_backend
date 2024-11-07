@@ -38,7 +38,7 @@ const temporaryData = {
   turbidity: [],
 }
 
-const init = async () => {
+const init = async (test = false) => {
   const userService = new UserService();
   const authService = new AuthService(userService);
   const notificationService = new NotificationService();
@@ -135,41 +135,55 @@ const init = async () => {
     },
   });
 
-  sensorListener(temporaryData, sensorData, firebaseService);
+  if (!test) {
+    sensorListener(temporaryData, sensorData, firebaseService);
 
-  const wss = new WebSocket.Server({ noServer: true });
-
-  server.listener.on('upgrade', async (request, socket, head) => {
-    const url = new URL(request.url, `http://${request.headers.host}`);
-    const token = url.searchParams.get('token');
-
-    const decodedToken = await verifyToken(token);
-
-    if (decodedToken === null || decodedToken.type === undefined) {
-      socket.destroy();
-      return;
-    }
-
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, decodedToken.id);
-    });
-  });
-
-  wss.on('connection', (ws, userId) => {
-    if (!webSocketClients.has(userId)) {
-      webSocketClients.set(userId, {
-        temperature: [],
-        pH: [],
-        salinity: [],
-        turbidity: []
+    const wss = new WebSocket.Server({ noServer: true });
+  
+    server.listener.on('upgrade', async (request, socket, head) => {
+      const url = new URL(request.url, `http://${request.headers.host}`);
+      const token = url.searchParams.get('token');
+  
+      const decodedToken = await verifyToken(token);
+  
+      if (decodedToken === null || decodedToken.type === undefined) {
+        socket.destroy();
+        return;
+      }
+  
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, decodedToken.id);
       });
-    }
+    });
+  
+    wss.on('connection', (ws, userId) => {
+      if (!webSocketClients.has(userId)) {
+        webSocketClients.set(userId, {
+          temperature: [],
+          pH: [],
+          salinity: [],
+          turbidity: []
+        });
+      }
+  
+      webSocketHandler(ws, webSocketClients, userId, temporaryData, sensorData);
+    });
+  }
+  
 
-    webSocketHandler(ws, webSocketClients, userId, temporaryData, sensorData);
-  });
+  if (!test) {
+    await server.start();
+  } else {
+    await server.initialize();
+  }
 
-  await server.start();
   console.log('Server running on %s', server.info.uri);
+
+  return server;
 };
 
-init();
+if (require.main === module) {
+  init();
+}
+
+module.exports = { init }
