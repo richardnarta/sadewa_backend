@@ -392,7 +392,7 @@ class FirebaseService {
 
     ref.on('value', async(snapshot) => {
       await this.sendNotification(
-        '[Pmberitahuan] Pakan Ternak Otomatis', 
+        '[Pemberitahuan] Pakan Ternak Otomatis', 
         `Jadwal atau jumlah pakan ternak otomatis berhasil diubah\n`,
         'low',
         first
@@ -408,7 +408,7 @@ class FirebaseService {
 
     ref.on('value', async(snapshot) => {
       await this.sendNotification(
-        '[Pmberitahuan] Kincir Air Otomatis', 
+        '[Pemberitahuan] Kincir Air Otomatis', 
         `Jadwal pengaktifan dan penonaktifan kincir air berhasil diubah\n`,
         'low',
         first

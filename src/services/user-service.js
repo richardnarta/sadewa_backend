@@ -195,6 +195,8 @@ class UserService {
       throw new ClientError('Pengguna belum terverifikasi');
     }
 
+    await removeToken(`${userId}:token`);
+
     await User.destroy({
       where: {
         id: userId

@@ -51,9 +51,9 @@ class HistoryService {
 
   async getHistoryDetail(date) {
     const startDate = new Date(date);
-    startDate.setHours(0, 0, 0, 0);
+    startDate.setUTCHours(0 - 7, 0, 0, 0);
     const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 59);
+    endDate.setUTCHours(23 - 7, 59, 59, 999);
 
     let data =  await History.findAll({
       where: {
