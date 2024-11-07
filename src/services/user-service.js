@@ -15,7 +15,9 @@ class UserService {
     } : { verified: true };
 
     return await User.findAll({
-      attributes: ['id', 'username', 'type'],
+      attributes: [
+        'id', 'username', 'email', 'type', 
+        'name', 'createdAt', 'updatedAt'],
       where: type
     });
   }
