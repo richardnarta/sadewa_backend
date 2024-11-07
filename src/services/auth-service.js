@@ -42,7 +42,10 @@ class AuthService {
     
     await storeToken(`${user.id}:token`, token);
 
-    return token;
+    return {
+      token: token,
+      id: user.id
+    };
   }
 
   async verifyForgetPassword(userEmail, OTP) {

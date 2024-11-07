@@ -23,13 +23,14 @@ class AuthHandler {
       user = await this._userService.getUserByUsername(username);
     }
     
-    const token = await this._authService.addUserTokenToRedis(
+    const userData = await this._authService.addUserTokenToRedis(
       request.payload, user);
 
     return h.response({
       error: false,
       message: "Login berhasil",
-      token: token,
+      token: userData.token,
+      user_id: userData.id
     }).code(200);
   }
 
