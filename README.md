@@ -101,6 +101,15 @@ To run the redis service, run the following command
 ```
 
 
+## Running Testing
+
+To run API testing, run the following command
+
+```bash
+  npm run test
+```
+
+
 ## Root User
 
 `username`="admin"
