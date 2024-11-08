@@ -30,7 +30,8 @@ class AuthHandler {
       error: false,
       message: "Login berhasil",
       token: userData.token,
-      user_id: userData.id
+      userId: userData.id,
+      type: userData.type
     }).code(200);
   }
 
