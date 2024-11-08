@@ -44,7 +44,8 @@ class AuthService {
 
     return {
       token: token,
-      id: user.id
+      id: user.id,
+      type: user.type
     };
   }
 
