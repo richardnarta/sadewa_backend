@@ -319,7 +319,7 @@ class FirebaseService {
       'value', async(snapshot) => {
         const dataPH = snapshot.val();
         const threshold = await this.getSensorThreshold(
-          'ph');
+          'pH');
 
         if (
           dataPH < threshold.min ||
