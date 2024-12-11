@@ -1,34 +1,61 @@
 const { db } = require('../../config/firebase-config');
 
 function sensorListener(temporaryData, data, firebaseService) {
-  setInterval(() => {
-    const ref = db.ref('status_sensor');
-    ref.on('value', (snapshot) => {
-      const sensorStatus = snapshot.val();
+  const ph = db.ref('sensorData/pH');
 
-      data.temperature = sensorStatus.suhu ? (Math.random() * (32 - 26) + 26).toFixed(2) : '0.00';
-      data.pH = sensorStatus.ph ? (Math.random() * (8.5 - 7.5) + 7.5).toFixed(2) : '0.00';
-      data.turbidity = sensorStatus.turbidity ? (Math.random() * (30 - 0) + 0).toFixed(2) : '0.00';
-      data.salinity = sensorStatus.salinitas ? (Math.random() * (30 - 10) + 10).toFixed(2) : '0.00';
-    });
+  ph.on('value', (snapshot) => {
+    const pHValue = snapshot.val();
 
-    if (
-      temporaryData.temperature.length == 20 ||
-      temporaryData.pH.length == 20 ||
-      temporaryData.salinity.length == 20 ||
-      temporaryData.turbidity.length == 20
-    ) {
-      temporaryData.temperature.shift();
+    data.pH = pHValue.toFixed(2)
+
+    if (temporaryData.pH.length == 20) {
       temporaryData.pH.shift();
+    }
+
+    temporaryData.pH.push(Number(pHValue));
+  });
+
+  const salinity = db.ref('sensorData/salinity');
+
+  salinity.on('value', (snapshot) => {
+    const salinityValue = snapshot.val();
+
+    data.salinity = salinityValue.toFixed(2)
+
+    if (temporaryData.salinity.length == 20) {
       temporaryData.salinity.shift();
+    }
+
+    temporaryData.salinity.push(Number(salinityValue));
+  });
+
+  const temperature = db.ref('sensorData/temperature');
+
+  temperature.on('value', (snapshot) => {
+    const temperatureValue = snapshot.val();
+
+    data.temperature = temperatureValue.toFixed(2)
+
+    if (temporaryData.temperature.length == 20) {
+      temporaryData.temperature.shift();
+    }
+
+    temporaryData.temperature.push(Number(temperatureValue));
+  });
+
+  const turbidity = db.ref('sensorData/turbidity');
+
+  turbidity.on('value', (snapshot) => {
+    const turbidityValue = snapshot.val();
+
+    data.turbidity = turbidityValue.toFixed(2)
+
+    if (temporaryData.turbidity.length == 20) {
       temporaryData.turbidity.shift();
     }
 
-    temporaryData.temperature.push(Number(data.temperature));
-    temporaryData.pH.push(Number(data.pH));
-    temporaryData.salinity.push(Number(data.salinity));
-    temporaryData.turbidity.push(Number(data.turbidity));
-  }, 2000);
+    temporaryData.turbidity.push(Number(turbidityValue));
+  });
 
   firebaseService.listenToFeederStatus();
   firebaseService.listenToSensorConfiguration();
